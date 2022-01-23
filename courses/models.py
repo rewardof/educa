@@ -1,3 +1,4 @@
+from statistics import mode
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -78,3 +79,43 @@ class Image(ItemBase):
 
 class Video(ItemBase):
     url = models.URLField()
+
+
+class Question(models.Model):
+    text = models.CharField(max_length=255)
+
+class Bot(models.Model):
+    bot_token = models.CharField(max_length=255)
+
+
+class BotState(models.Model):
+    bot = models.ForeignKey(Bot, on_delete=models.CASCADE)
+    states = models.ManyToManyField(Question)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, limit_choices_to={'model__in': (
+        'text',
+        'video',
+        'image',
+        'file'
+    )})
+    object_id = models.PositiveIntegerField()
+    item = GenericForeignKey('content_type', 'object_id')
+
+class FirstNameState(models.Model):
+    state = models.CharField(max_length=64, unique=True)
+
+
+class Field(models.Model):
+    state = models.CharField(max_length=64)
+    question = models.CharField(max_length=256)
+
+
+class BotQuestion(models.Model):
+    bot = models.OneToOneField(Bot, on_delete=models.CASCADE)
+    fields = models.ManyToManyField(Field)
+    created_date = models.DateTimeField(auto_now_add=True)
+
+
+class UserApplyData(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+

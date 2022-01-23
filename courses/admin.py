@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, Module, Subject
+from .models import Course, Module, Subject, Content, Text, Video, Image, File, ItemBase
 
 
 @admin.register(Subject)
@@ -19,5 +19,13 @@ class CourseAdmin(admin.ModelAdmin):
     search_fields = ['title', 'overview']
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ModuleInline]
+
+
+admin.site.register(Module)
+admin.site.register(Image)
+admin.site.register(Video)
+admin.site.register(File)
+admin.site.register(Content)
+admin.site.register(Text)
 
 
